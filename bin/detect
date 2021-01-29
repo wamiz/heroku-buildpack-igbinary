@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "PHP igbinary extension"
+exit 0

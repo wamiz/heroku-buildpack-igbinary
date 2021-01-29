@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+# bin/compile <build-dir> <cache-dir> <env-dir>
+
+# fail hard
+set -o pipefail
+# fail harder
+set -eu
+# move hidden files too, just in case
+shopt -s dotglob
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
+CRT="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+
+
+echo "-----> PHP igbinary Copy igbinary extension"
+cp -f $CRT/../src/igbinary.so $BUILD_DIR/.heroku/php/lib/php/extensions/no-debug-non-zts-20190902/.
+
+echo "-----> PHP igbinary Update Redis extension"
+cp -f $CRT/../src/redis.so $BUILD_DIR/.heroku/php/lib/php/extensions/no-debug-non-zts-20190902/.
+
+echo "-----> PHP igbinary Load igbinary extension"
+cat > $BUILD_DIR/.heroku/php/etc/php/conf.d/160-ext-igbinary.ini <<'EOF'
+extension=igbinary.so
+EOF
+
+echo "-----> PHP igbinary 🎉"
